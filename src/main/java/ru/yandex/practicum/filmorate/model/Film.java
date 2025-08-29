@@ -1,13 +1,13 @@
 package ru.yandex.practicum.filmorate.model;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import java.time.Duration;
 import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.yandex.practicum.filmorate.validation.PositiveDuration;
 import ru.yandex.practicum.filmorate.validation.ValidReleaseDate;
 
 @AllArgsConstructor
@@ -21,6 +21,6 @@ public class Film {
     private String description;
     @ValidReleaseDate
     private LocalDate releaseDate;
-    @PositiveDuration(message = "Duration must be positive number")
-    private Duration duration;
+    @Positive(message = "Duration must be positive number")
+    private int duration;
 }

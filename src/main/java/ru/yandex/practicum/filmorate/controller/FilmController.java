@@ -21,6 +21,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 public class FilmController {
     private Map<Long, Film> idToFilm = new HashMap<>();
     private Long idCounter = 1L;
+
     @PostMapping
     public Film add(@RequestBody @Valid Film film) {
         log.info("received an HTTP request to add a film {}", film);

@@ -9,13 +9,11 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
-import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.filmorate.controller.FilmController;
 import ru.yandex.practicum.filmorate.controller.UserController;
@@ -40,8 +38,8 @@ class FilmorateApplicationTests {
 
 
     @Test
-	void contextLoads() {
-	}
+    void contextLoads() {
+    }
 
     @Test
     void testAddAndGetAllFilmsOneFilmShouldReturn() {
@@ -49,7 +47,7 @@ class FilmorateApplicationTests {
         film.setName("Inception");
         film.setDescription("Mind-bending thriller");
         film.setReleaseDate(LocalDate.of(2010, 7, 16));
-        film.setDuration(Duration.ofMinutes(148));
+        film.setDuration(148);
 
         filmController.add(film);
 
@@ -64,7 +62,7 @@ class FilmorateApplicationTests {
         film.setName("Matrix");
         film.setDescription("Sci-fi classic");
         film.setReleaseDate(LocalDate.of(1999, 3, 31));
-        film.setDuration(Duration.ofMinutes(136));
+        film.setDuration(136);
 
         Film created = filmController.add(film);
         created.setName("Matrix Reloaded");
@@ -81,15 +79,14 @@ class FilmorateApplicationTests {
                 "The Shawshank Redemption",
                 "A story of hope and friendship in prison",
                 LocalDate.of(1994, 9, 23),
-                Duration.ofMinutes(142)
-        );
+                142);
 
         Film film2 = new Film(
                 null,
                 "Fight Club",
                 "An insomniac office worker and a soap maker form an underground fight club",
                 LocalDate.of(1999, 10, 15),
-                Duration.ofMinutes(139)
+                139
         );
 
         Film film3 = new Film(
@@ -97,7 +94,7 @@ class FilmorateApplicationTests {
                 "Forrest Gump",
                 "The life journey of a simple man with a big heart",
                 LocalDate.of(1994, 7, 6),
-                Duration.ofMinutes(142)
+                142
         );
 
         Film film1FromServer = filmController.add(film1);
@@ -122,7 +119,7 @@ class FilmorateApplicationTests {
                 "Ghost Film",
                 "This film does not exist in the server",
                 LocalDate.of(2020, 1, 1),
-                Duration.ofMinutes(120)
+                120
         );
 
         NotFoundException exception = assertThrows(
@@ -140,7 +137,7 @@ class FilmorateApplicationTests {
                 "",
                 "Description is fine",
                 LocalDate.of(2000, 1, 1),
-                Duration.ofMinutes(120)
+                120
         );
 
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
@@ -157,14 +154,14 @@ class FilmorateApplicationTests {
                 "Inception",
                 "A".repeat(250),
                 LocalDate.of(2010, 7, 16),
-                Duration.ofMinutes(148)
+                148
         );
 
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
 
         assertFalse(violations.isEmpty());
         assertTrue(violations.stream()
-                        .anyMatch(v -> v.getPropertyPath().toString().equals("description")));
+                .anyMatch(v -> v.getPropertyPath().toString().equals("description")));
     }
 
     @Test
@@ -174,14 +171,14 @@ class FilmorateApplicationTests {
                 "Inception",
                 "A valid description",
                 LocalDate.of(1800, 1, 1),
-                Duration.ofMinutes(148)
+                148
         );
 
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
 
         assertFalse(violations.isEmpty());
         assertTrue(violations.stream()
-                        .anyMatch(v -> v.getPropertyPath().toString().equals("releaseDate")));
+                .anyMatch(v -> v.getPropertyPath().toString().equals("releaseDate")));
     }
 
     @Test
@@ -191,14 +188,14 @@ class FilmorateApplicationTests {
                 "Inception",
                 "A valid description",
                 LocalDate.of(2010, 7, 16),
-                Duration.ofMinutes(-120)
+                -120
         );
 
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
 
         assertFalse(violations.isEmpty());
         assertTrue(violations.stream()
-                        .anyMatch(v -> v.getPropertyPath().toString().equals("duration")));
+                .anyMatch(v -> v.getPropertyPath().toString().equals("duration")));
     }
 
     @Test
@@ -294,13 +291,13 @@ class FilmorateApplicationTests {
     }
 
     @Test
-    void addUserWithFutureBirthdateShouldFailValidation() {
+    void addUserWithFutureBirthdayShouldFailValidation() {
         User user = new User(null, "Alice", "aliceLogin", "alice@example.com", LocalDate.now().plusDays(1));
 
         Set<ConstraintViolation<User>> violations = validator.validate(user);
 
         assertFalse(violations.isEmpty());
-        assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("birthdate")));
+        assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("birthday")));
     }
 
     @Test

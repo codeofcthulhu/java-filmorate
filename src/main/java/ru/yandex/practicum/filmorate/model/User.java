@@ -21,5 +21,5 @@ public class User {
     @Email(message = "Email is invalid")
     private String email;
     @PastOrPresent(message = "Birth date can't be in future time")
-    private LocalDate birthdate;
+    private LocalDate birthday;
 }
