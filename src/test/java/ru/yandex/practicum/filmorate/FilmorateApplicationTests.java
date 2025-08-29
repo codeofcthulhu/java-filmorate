@@ -20,6 +20,8 @@ import ru.yandex.practicum.filmorate.controller.UserController;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.validation.groups.OnCreate;
+import ru.yandex.practicum.filmorate.validation.groups.OnUpdate;
 
 @SpringBootTest
 class FilmorateApplicationTests {
@@ -140,7 +142,7 @@ class FilmorateApplicationTests {
                 120
         );
 
-        Set<ConstraintViolation<Film>> violations = validator.validate(film);
+        Set<ConstraintViolation<Film>> violations = validator.validate(film, OnCreate.class);
 
         assertFalse(violations.isEmpty());
         assertTrue(
@@ -157,7 +159,7 @@ class FilmorateApplicationTests {
                 148
         );
 
-        Set<ConstraintViolation<Film>> violations = validator.validate(film);
+        Set<ConstraintViolation<Film>> violations = validator.validate(film, OnCreate.class);
 
         assertFalse(violations.isEmpty());
         assertTrue(violations.stream()
@@ -174,7 +176,7 @@ class FilmorateApplicationTests {
                 148
         );
 
-        Set<ConstraintViolation<Film>> violations = validator.validate(film);
+        Set<ConstraintViolation<Film>> violations = validator.validate(film, OnCreate.class);
 
         assertFalse(violations.isEmpty());
         assertTrue(violations.stream()
@@ -191,7 +193,7 @@ class FilmorateApplicationTests {
                 -120
         );
 
-        Set<ConstraintViolation<Film>> violations = validator.validate(film);
+        Set<ConstraintViolation<Film>> violations = validator.validate(film, OnCreate.class);
 
         assertFalse(violations.isEmpty());
         assertTrue(violations.stream()
@@ -202,7 +204,7 @@ class FilmorateApplicationTests {
     void addCompletelyEmptyFilmShouldFailValidation() {
         Film film = new Film();
 
-        Set<ConstraintViolation<Film>> violations = validator.validate(film);
+        Set<ConstraintViolation<Film>> violations = validator.validate(film, OnCreate.class);
 
         assertFalse(violations.isEmpty());
         assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("name")));
@@ -264,7 +266,7 @@ class FilmorateApplicationTests {
     void addUserWithEmptyLoginShouldFailValidation() {
         User user = new User(null, "Alice", "", "alice@example.com", LocalDate.of(1990, 1, 1));
 
-        Set<ConstraintViolation<User>> violations = validator.validate(user);
+        Set<ConstraintViolation<User>> violations = validator.validate(user, OnCreate.class);
 
         assertFalse(violations.isEmpty());
         assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("login")));
@@ -274,7 +276,7 @@ class FilmorateApplicationTests {
     void addUserWithLoginContainingSpacesShouldFailValidation() {
         User user = new User(null, "Alice", "alice login", "alice@example.com", LocalDate.of(1990, 1, 1));
 
-        Set<ConstraintViolation<User>> violations = validator.validate(user);
+        Set<ConstraintViolation<User>> violations = validator.validate(user, OnCreate.class);
 
         assertFalse(violations.isEmpty());
         assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("login")));
@@ -284,7 +286,7 @@ class FilmorateApplicationTests {
     void addUserWithInvalidEmailShouldFailValidation() {
         User user = new User(null, "Alice", "aliceLogin", "not-an-email", LocalDate.of(1990, 1, 1));
 
-        Set<ConstraintViolation<User>> violations = validator.validate(user);
+        Set<ConstraintViolation<User>> violations = validator.validate(user, OnCreate.class);
 
         assertFalse(violations.isEmpty());
         assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("email")));
@@ -294,7 +296,7 @@ class FilmorateApplicationTests {
     void addUserWithFutureBirthdayShouldFailValidation() {
         User user = new User(null, "Alice", "aliceLogin", "alice@example.com", LocalDate.now().plusDays(1));
 
-        Set<ConstraintViolation<User>> violations = validator.validate(user);
+        Set<ConstraintViolation<User>> violations = validator.validate(user, OnCreate.class);
 
         assertFalse(violations.isEmpty());
         assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("birthday")));
@@ -313,11 +315,27 @@ class FilmorateApplicationTests {
     void addCompletelyEmptyUserShouldFailValidation() {
         User user = new User();
 
-        Set<ConstraintViolation<User>> violations = validator.validate(user);
+        Set<ConstraintViolation<User>> violations = validator.validate(user, OnCreate.class);
 
         assertFalse(violations.isEmpty());
         assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("login")));
     }
+
+    @Test
+    void testUserEmailCanBeOmittedOnUpdate() {
+        User user = new User(
+                1L,
+                "Alice",
+                "aliceLogin",
+                null,
+                LocalDate.of(1990, 1, 1)
+        );
+
+        Set<ConstraintViolation<User>> violations = validator.validate(user, OnUpdate.class);
+
+        assertTrue(violations.isEmpty());
+    }
+
 }
 
 

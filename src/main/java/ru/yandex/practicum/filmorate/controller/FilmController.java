@@ -1,11 +1,11 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import jakarta.validation.Valid;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.validation.groups.OnCreate;
+import ru.yandex.practicum.filmorate.validation.groups.OnUpdate;
 
 @RestController
 @RequestMapping("/films")
@@ -23,7 +25,7 @@ public class FilmController {
     private Long idCounter = 1L;
 
     @PostMapping
-    public Film add(@RequestBody @Valid Film film) {
+    public Film add(@RequestBody @Validated(OnCreate.class) Film film) {
         log.info("received an HTTP request to add a film {}", film);
         film.setId(idCounter++);
         idToFilm.put(film.getId(), film);
@@ -38,7 +40,7 @@ public class FilmController {
     }
 
     @PutMapping
-    public Film update(@RequestBody @Valid Film film) {
+    public Film update(@RequestBody @Validated(OnUpdate.class) Film film) {
         log.info("received an HTTP request to update a film {}", film);
         Long id = film.getId();
         if (! idToFilm.containsKey(id)) {
