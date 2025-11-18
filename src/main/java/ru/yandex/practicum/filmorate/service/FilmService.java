@@ -17,8 +17,8 @@ import ru.yandex.practicum.filmorate.util.EntityFinder;
 @Slf4j
 public class FilmService {
 
-    final private FilmStorage filmStorage;
-    final private UserService userService;
+    private final FilmStorage filmStorage;
+    private final UserService userService;
 
     public Film create(Film film) {
         return filmStorage.create(film);
