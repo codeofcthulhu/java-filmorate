@@ -26,6 +26,10 @@ public class Film {
     @Positive(groups = {OnCreate.class, OnUpdate.class}, message = "Duration must be positive number")
     private int duration;
 
+    public Film() {
+        this.likesByUserId = new HashSet<>();
+    }
+
     public Film(Long id, String name, String description, LocalDate releaseDate, int duration) {
         this.id = id;
         this.name = name;
