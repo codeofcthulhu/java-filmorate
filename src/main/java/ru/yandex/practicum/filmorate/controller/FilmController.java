@@ -23,7 +23,7 @@ import ru.yandex.practicum.filmorate.validation.groups.OnUpdate;
 @Slf4j
 @RequiredArgsConstructor
 public class FilmController {
-    final private FilmService filmService;
+    private final FilmService filmService;
 
     @PostMapping
     public Film create(@RequestBody @Validated(OnCreate.class) Film film) {
