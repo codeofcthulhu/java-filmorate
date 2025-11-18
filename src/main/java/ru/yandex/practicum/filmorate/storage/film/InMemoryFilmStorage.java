@@ -5,11 +5,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
 
 @Data
 @Component
+@Slf4j
 public class InMemoryFilmStorage implements FilmStorage {
     private Map<Long, Film> idToFilm = new HashMap<>();
     private Long idCounter = 1L;
@@ -18,6 +20,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     public Film create(Film film) {
         film.setId(idCounter++);
         idToFilm.put(film.getId(), film);
+        log.info("film adding request successfully processed {}", film);
         return film;
     }
 
