@@ -1,7 +1,5 @@
 package ru.yandex.practicum.filmorate.service;
 
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +19,7 @@ public class FilmService {
     private final UserService userService;
 
     public Film create(Film film) {
+        log.info("film adding request successfully processed {}", film);
         return filmStorage.create(film);
     }
 
@@ -61,9 +60,7 @@ public class FilmService {
 
     public List<Film> getMostLikedFilms(int count) {
         log.info("request for most liked films successfully proceed");
-        return filmStorage.getAll().stream()
-                .sorted(Collections.reverseOrder(Comparator.comparing(film -> film.getLikesByUserId().size())))
-                .limit(count).toList();
+        return filmStorage.getMostLikedFilms(count);
     }
 
     public Film findFilmOrThrow(Long filmId) {

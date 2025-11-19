@@ -20,6 +20,7 @@ public class UserService {
 
     public User create(User user) {
         checkName(user);
+        log.info("user creation request successfully processed {}", user);
         return userStorage.create(user);
     }
 

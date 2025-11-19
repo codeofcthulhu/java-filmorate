@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -9,12 +10,15 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import ru.yandex.practicum.filmorate.validation.groups.OnCreate;
 import ru.yandex.practicum.filmorate.validation.groups.OnUpdate;
 
 @Data
+@NoArgsConstructor
 public class User {
-    Set<Long> friendsById = new HashSet<>();
+    @JsonIgnore
+    private Set<Long> friendsById = new HashSet<>();
     @NotNull(groups = OnUpdate.class, message = "ID must be specified")
     private Long id;
     private String name;
@@ -27,10 +31,6 @@ public class User {
     private String email;
     @PastOrPresent(groups = {OnCreate.class, OnUpdate.class}, message = "Birth date can't be in future time")
     private LocalDate birthday;
-
-    public User() {
-        this.friendsById = new HashSet<>();
-    }
 
     public User(Long id, String name, String login, String email, LocalDate birthday) {
         this.id = id;
