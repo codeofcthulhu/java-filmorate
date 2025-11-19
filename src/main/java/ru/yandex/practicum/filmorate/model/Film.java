@@ -18,7 +18,7 @@ import ru.yandex.practicum.filmorate.validation.groups.OnUpdate;
 @NoArgsConstructor
 public class Film {
     @JsonIgnore
-    private Set<Long> likesByUserId = new HashSet<>();;
+    private Set<Long> likesByUserId = new HashSet<>();
     @NotNull(groups = OnUpdate.class, message = "ID must be specified")
     private Long id;
     @NotBlank(groups = OnCreate.class, message = "Film name must not be empty")
