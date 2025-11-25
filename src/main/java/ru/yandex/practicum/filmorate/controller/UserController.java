@@ -1,64 +1,74 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.validation.groups.OnCreate;
 import ru.yandex.practicum.filmorate.validation.groups.OnUpdate;
 
 @RestController
 @RequestMapping("/users")
 @Slf4j
+@RequiredArgsConstructor
 public class UserController {
-    private Map<Long, User> idToUser = new HashMap<>();
-    private Long idCounter = 1L;
+    private final UserService userService;
 
     @PostMapping
     public User create(@RequestBody @Validated(OnCreate.class) User user) {
-        log.info("received an HTTP request to create a user {}", user);
-        user.setId(idCounter++);
-        checkName(user);
-        idToUser.put(user.getId(), user);
-        log.info("HTTP user creation request successfully processed {}", user);
-        return user;
+        log.info("received HTTP request to create a user {}", user);
+        return userService.create(user);
     }
 
     @GetMapping
     public List<User> getAll() {
-        log.info("The HTTP request for all users has been accepted and successfully processed");
-        return new ArrayList<>(idToUser.values());
+        log.info("received HTTP request to get list of all users");
+        return userService.getAll();
     }
 
     @PutMapping
     public User update(@RequestBody @Validated(OnUpdate.class) User user) {
-        log.info("received an HTTP request to update a user {}", user);
-        Long id = user.getId();
-        if (! idToUser.containsKey(id)) {
-            String errorMessage = String.format("User with id: %d is not found", id);
-            log.warn(errorMessage);
-            throw new NotFoundException(errorMessage);
-        }
-        checkName(user);
-        idToUser.put(id, user);
-        log.info("HTTP user update request successfully processed {}", user);
-        return user;
+        log.info("received HTTP request to update a user {}", user);
+        return userService.update(user);
     }
 
-    private void checkName(User user) {
-        String name = user.getName();
-        if ((name == null) || (name.isBlank())) {
-            user.setName(user.getLogin());
-        }
+    @GetMapping("/{id}")
+    public User getUserById(@PathVariable Long id) {
+        log.info("received HTTP request to get user by id {}", id);
+        return userService.findUserOrThrow(id);
+    }
+
+    @PutMapping("/{id}/friends/{friendId}")
+    public User addFriend(@PathVariable Long id, @PathVariable Long friendId) {
+        log.info("received HTTP request to make users {} and {} friends", id, friendId);
+        return userService.addFriend(id, friendId);
+    }
+
+    @DeleteMapping("/{id}/friends/{friendId}")
+    public User deleteFriend(@PathVariable Long id, @PathVariable Long friendId) {
+        log.info("received HTTP request to ending friendship between users {} and {}", id, friendId);
+        return userService.deleteFriend(id, friendId);
+    }
+
+    @GetMapping("/{id}/friends")
+    public List<User> getFriends(@PathVariable Long id) {
+        log.info("received HTTP request to get list of friends of user {}", id);
+        return userService.getFriends(id);
+    }
+
+    @GetMapping("/{id}/friends/common/{otherId}")
+    public List<User> getCommonFriends(@PathVariable Long id, @PathVariable Long otherId) {
+        log.info("received HTTP request to get common friends of users {} and {}", id, otherId);
+        return userService.getCommonFriends(id, otherId);
     }
 }

@@ -1,56 +1,70 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.validation.groups.OnCreate;
 import ru.yandex.practicum.filmorate.validation.groups.OnUpdate;
 
 @RestController
 @RequestMapping("/films")
 @Slf4j
+@RequiredArgsConstructor
 public class FilmController {
-    private Map<Long, Film> idToFilm = new HashMap<>();
-    private Long idCounter = 1L;
+    private final FilmService filmService;
 
     @PostMapping
-    public Film add(@RequestBody @Validated(OnCreate.class) Film film) {
-        log.info("received an HTTP request to add a film {}", film);
-        film.setId(idCounter++);
-        idToFilm.put(film.getId(), film);
-        log.info("HTTP film adding request successfully processed {}", film);
-        return film;
+    public Film create(@RequestBody @Validated(OnCreate.class) Film film) {
+        log.info("received HTTP request to create a film {}", film);
+        return filmService.create(film);
     }
 
     @GetMapping
     public List<Film> getAll() {
-        log.info("The HTTP request for all films has been accepted and successfully processed");
-        return new ArrayList<>(idToFilm.values());
+        log.info("received HTTP request to get list of all films");
+        return filmService.getAll();
     }
 
     @PutMapping
     public Film update(@RequestBody @Validated(OnUpdate.class) Film film) {
-        log.info("received an HTTP request to update a film {}", film);
-        Long id = film.getId();
-        if (! idToFilm.containsKey(id)) {
-            String errorMessage = String.format("Film with id: %d is not found", id);
-            log.warn(errorMessage);
-            throw new NotFoundException(errorMessage);
-        }
-
-        idToFilm.put(id, film);
-        log.info("HTTP film update request successfully processed {}", film);
-        return film;
+        log.info("received HTTP request to update a film {}", film);
+        return filmService.update(film);
     }
+
+    @GetMapping("/{id}")
+    public Film getFilmById(@PathVariable Long id) {
+        log.info("received HTTP request to get film by id {}", id);
+        return filmService.findFilmOrThrow(id);
+    }
+
+    @PutMapping("/{id}/like/{userId}")
+    public Film addLike(@PathVariable Long id, @PathVariable Long userId) {
+        log.info("received HTTP request to add like to film {} from user {}", id, userId);
+        return filmService.addLike(id, userId);
+    }
+
+    @DeleteMapping("/{id}/like/{userId}")
+    public Film deleteLike(@PathVariable Long id, @PathVariable Long userId) {
+        log.info("received HTTP request to delete like from film {} from user {}", id, userId);
+        return filmService.deleteLike(id, userId);
+    }
+
+    @GetMapping("/popular")
+    public List<Film> getMostLikedFilms(@RequestParam(defaultValue = "10") int count) {
+        log.info("received HTTP request to get {} most liked films", count);
+        return filmService.getMostLikedFilms(count);
+    }
+
 }

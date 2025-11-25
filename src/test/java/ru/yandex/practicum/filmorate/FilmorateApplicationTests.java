@@ -20,6 +20,12 @@ import ru.yandex.practicum.filmorate.controller.UserController;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.film.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 import ru.yandex.practicum.filmorate.validation.groups.OnCreate;
 import ru.yandex.practicum.filmorate.validation.groups.OnUpdate;
 
@@ -32,8 +38,12 @@ class FilmorateApplicationTests {
 
     @BeforeEach
     void setUp() {
-        filmController = new FilmController();
-        userController = new UserController();
+        FilmStorage filmStorage = new InMemoryFilmStorage();
+        UserStorage userStorage = new InMemoryUserStorage();
+        UserService userService = new UserService(userStorage);
+        FilmService filmService = new FilmService(filmStorage, userService);
+        filmController = new FilmController(filmService);
+        userController = new UserController(userService);
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         validator = factory.getValidator();
     }
@@ -51,7 +61,7 @@ class FilmorateApplicationTests {
         film.setReleaseDate(LocalDate.of(2010, 7, 16));
         film.setDuration(148);
 
-        filmController.add(film);
+        filmController.create(film);
 
         List<Film> films = filmController.getAll();
         assertEquals(1, films.size());
@@ -66,7 +76,7 @@ class FilmorateApplicationTests {
         film.setReleaseDate(LocalDate.of(1999, 3, 31));
         film.setDuration(136);
 
-        Film created = filmController.add(film);
+        Film created = filmController.create(film);
         created.setName("Matrix Reloaded");
 
         Film updated = filmController.update(created);
@@ -99,9 +109,9 @@ class FilmorateApplicationTests {
                 142
         );
 
-        Film film1FromServer = filmController.add(film1);
-        Film film2FromServer = filmController.add(film2);
-        Film film3FromServer = filmController.add(film3);
+        Film film1FromServer = filmController.create(film1);
+        Film film2FromServer = filmController.create(film2);
+        Film film3FromServer = filmController.create(film3);
 
         List<Film> films = filmController.getAll();
         assertEquals(3, films.size());
