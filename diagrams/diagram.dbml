@@ -1,0 +1,71 @@
+// Enum for Motion Picture Association (MPA) ratings
+Enum mpa_rating {
+  G       // No age restrictions
+  PG      // Parental guidance suggested
+  PG_13   // Not suitable for children under 13
+  R       // Restricted, under 17 requires adult
+  NC_17   // No one 17 and under admitted
+}
+
+// Enum for friendship status
+Enum friendship_status {
+  REQUESTED   // Friend request sent but not yet confirmed
+  CONFIRMED   // Friend request accepted
+}
+
+// Users table
+Table users {
+  user_id      bigint [pk, increment]  // Primary key, auto-increment
+  name         varchar                 // User's name
+  login        varchar [not null]      // User's login (required)
+  email        varchar [not null]      // User's email (required)
+  birthday     date                    // User's birth date
+}
+
+// Films table
+Table films {
+  film_id      bigint [pk, increment]  // Primary key, auto-increment
+  name         varchar [not null]      // Film title
+  description  varchar(200)            // Short description of the film
+  release_date date                     // Release date
+  duration     int [not null]          // Duration in minutes
+  mpa          mpa_rating              // Film's MPA rating
+}
+
+// Genres table
+Table genres {
+  genre_id   bigint [pk, increment]     // Primary key, auto-increment
+  name       varchar [not null]         // Genre name
+}
+
+// Many-to-many relationship between films and genres
+Table film_genres {
+  film_id   bigint [ref: > films.film_id]   // References films table
+  genre_id  bigint [ref: > genres.genre_id] // References genres table
+
+  Indexes {
+    (film_id, genre_id) [pk]  // Composite primary key
+  }
+}
+
+// Friendships table
+Table friendships {
+  user_id   bigint [ref: > users.user_id]   // References the user who sent the request
+  friend_id bigint [ref: > users.user_id]   // References the friend
+  status    friendship_status [not null]    // Friendship status
+
+  Indexes {
+    (user_id, friend_id) [pk]  // Composite primary key
+  }
+}
+
+// Likes table
+Table likes {
+  user_id bigint [ref: > users.user_id]     // References the user who liked
+  film_id bigint [ref: > films.film_id]     // References the film liked
+
+  Indexes {
+    (user_id, film_id) [pk]  // Composite primary key
+  }
+}
+
