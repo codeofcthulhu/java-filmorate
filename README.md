@@ -6,7 +6,7 @@ Filmorate is an application for managing movies and users, implementing basic so
 
 The database schema represents the structure of the application data in **Third Normal Form (3NF)**. It includes tables for users, films, genres, friendships, likes, and the association between films and genres.
 
-![Filmorate Database Schema](./docs/filmorate_db_schema.png)
+![Filmorate Database Schema](./diagrams/dbdiagramFilmorate.png)
 
 **Key points of the schema:**
 
@@ -65,10 +65,4 @@ WHERE l.user_id = 1;
 
 - All relationships are normalized according to the 3rd Normal Form (3NF).
 - Enum fields are used for `friendship.status` and `film.mpa_rating`.
-- Many-to-many relationships (films ↔ genres, users ↔ friends) are represented via separate join tables.
-
-## Diagram Link
-
-To view or edit the database diagram online, use:  
-[https://dbdiagram.io/d/your-diagram-link](https://dbdiagram.io/d/your-diagram-link)
-	
+- Many-to-many relationships (films ↔ genres, users ↔ friends) are represented via separate join tables.	
