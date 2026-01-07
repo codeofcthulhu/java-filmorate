@@ -3,10 +3,10 @@ package ru.yandex.practicum.filmorate.service;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exception.AlreadyLikedException;
-import ru.yandex.practicum.filmorate.exception.NoLikeException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.util.EntityFinder;
 
@@ -15,6 +15,7 @@ import ru.yandex.practicum.filmorate.util.EntityFinder;
 @Slf4j
 public class FilmService {
 
+    @Qualifier("filmDbStorage")
     private final FilmStorage filmStorage;
     private final UserService userService;
 
@@ -24,6 +25,7 @@ public class FilmService {
     }
 
     public List<Film> getAll() {
+        log.info("getAll request successfully processed");
         return filmStorage.getAll();
     }
 
@@ -34,28 +36,20 @@ public class FilmService {
         return filmStorage.update(film);
     }
 
-    public Film addLike(Long id, Long userId) {
-        Film film = findFilmOrThrow(id);
+    public List<User> addLike(Long id, Long userId) {
+        findFilmOrThrow(id);
         userService.findUserOrThrow(userId);
-        if (!film.getLikesByUserId().add(userId)) {
-            String errorMessage = String.format("User %d have already liked film %d", userId, id);
-            log.warn(errorMessage);
-            throw new AlreadyLikedException(errorMessage);
-        }
+        List<User> users = filmStorage.addLike(id, userId);
         log.info("User {} liked film {}", userId, id);
-        return film;
+        return users;
     }
 
-    public Film deleteLike(Long id, Long userId) {
+    public List<User> deleteLike(Long id, Long userId) {
         Film film = findFilmOrThrow(id);
         userService.findUserOrThrow(userId);
-        if (!film.getLikesByUserId().remove(userId)) {
-            String errorMessage = String.format("User %d did not like film %d", userId, id);
-            log.warn(errorMessage);
-            throw new NoLikeException(errorMessage);
-        }
+        List<User> users = filmStorage.deleteLike(id, userId);
         log.info("User {} remove like from film {}", userId, id);
-        return film;
+        return users;
     }
 
     public List<Film> getMostLikedFilms(int count) {
@@ -66,5 +60,4 @@ public class FilmService {
     public Film findFilmOrThrow(Long filmId) {
         return EntityFinder.findOrThrow(filmId, filmStorage::findById, "Film");
     }
-
 }

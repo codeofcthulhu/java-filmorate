@@ -5,7 +5,7 @@
 //   R       Restricted, under 17 requires adult
 //   NC_17   No one 17 and under admitted
 Table mpa_rating {
-  mpa_id       bigint [pk, increment]
+  mpa_id       int [pk, increment]
   name         varchar [not null]
 }
 

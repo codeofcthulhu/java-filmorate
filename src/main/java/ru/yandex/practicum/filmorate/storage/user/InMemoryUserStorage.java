@@ -4,11 +4,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.User;
 
 @Component
+@Qualifier("inMemoryUserStorage")
 public class InMemoryUserStorage implements UserStorage {
+
     private Map<Long, User> idToUser = new HashMap<>();
     private Long idCounter = 1L;
 
@@ -33,5 +36,20 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public User findById(Long id) {
         return idToUser.get(id);
+    }
+
+    @Override
+    public List<User> getFriends(Long id) {
+        return List.of();
+    }
+
+    @Override
+    public List<User> deleteFriend(Long id, Long friendId) {
+        return List.of();
+    }
+
+    @Override
+    public List<User> addFriend(Long id, Long friendId) {
+        return List.of();
     }
 }

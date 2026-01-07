@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.validation.groups.OnCreate;
 import ru.yandex.practicum.filmorate.validation.groups.OnUpdate;
@@ -23,6 +24,7 @@ import ru.yandex.practicum.filmorate.validation.groups.OnUpdate;
 @Slf4j
 @RequiredArgsConstructor
 public class FilmController {
+
     private final FilmService filmService;
 
     @PostMapping
@@ -50,13 +52,13 @@ public class FilmController {
     }
 
     @PutMapping("/{id}/like/{userId}")
-    public Film addLike(@PathVariable Long id, @PathVariable Long userId) {
+    public List<User> addLike(@PathVariable Long id, @PathVariable Long userId) {
         log.info("received HTTP request to add like to film {} from user {}", id, userId);
         return filmService.addLike(id, userId);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
-    public Film deleteLike(@PathVariable Long id, @PathVariable Long userId) {
+    public List<User> deleteLike(@PathVariable Long id, @PathVariable Long userId) {
         log.info("received HTTP request to delete like from film {} from user {}", id, userId);
         return filmService.deleteLike(id, userId);
     }

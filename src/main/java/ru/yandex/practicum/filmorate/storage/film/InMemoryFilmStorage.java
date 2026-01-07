@@ -6,11 +6,15 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.User;
 
 @Component
+@Qualifier("inMemoryFilmStorage")
 public class InMemoryFilmStorage implements FilmStorage {
+
     private Map<Long, Film> idToFilm = new HashMap<>();
     private Long idCounter = 1L;
 
@@ -41,6 +45,16 @@ public class InMemoryFilmStorage implements FilmStorage {
         return getAll().stream()
                 .sorted(Collections.reverseOrder(Comparator.comparing(film -> film.getLikesByUserId().size())))
                 .limit(count).toList();
+    }
+
+    @Override
+    public List<User> deleteLike(Long id, Long userId) {
+        return List.of();
+    }
+
+    @Override
+    public List<User> addLike(Long id, Long userId) {
+        return null;
     }
 
 }

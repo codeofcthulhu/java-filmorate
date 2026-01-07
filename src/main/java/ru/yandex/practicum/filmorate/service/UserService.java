@@ -4,9 +4,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exception.AlreadyNotFriendsException;
-import ru.yandex.practicum.filmorate.exception.DuplicatedDataException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 import ru.yandex.practicum.filmorate.util.EntityFinder;
@@ -16,6 +15,7 @@ import ru.yandex.practicum.filmorate.util.EntityFinder;
 @Slf4j
 public class UserService {
 
+    @Qualifier("userDbStorage")
     private final UserStorage userStorage;
 
     public User create(User user) {
@@ -36,34 +36,24 @@ public class UserService {
         return userStorage.update(user);
     }
 
-    public User addFriend(Long id, Long friendId) {
-        User user = findUserOrThrow(id);
-        User friend = findUserOrThrow(friendId);
-        if (!(user.getFriendsById().add(friendId)) || !(friend.getFriendsById().add(id))) {
-            String errorMessage = String.format("Users with id: %d and %d - are already friends", id, friendId);
-            log.warn(errorMessage);
-            throw new DuplicatedDataException(errorMessage);
-        }
+    public List<User> addFriend(Long id, Long friendId) {
+        findUserOrThrow(id);
+        findUserOrThrow(friendId);
         log.info("User {} and user {} successfully become friends", id, friendId);
-        return user;
+        return userStorage.addFriend(id, friendId);
     }
 
-    public User deleteFriend(Long id, Long friendId) {
+    public List<User> deleteFriend(Long id, Long friendId) {
         User user = findUserOrThrow(id);
         User friend = findUserOrThrow(friendId);
-        if (! (user.getFriendsById().remove(friendId)) || ! (friend.getFriendsById().remove(id))) {
-            String errorMessage = String.format("Users with id: %d and %d - are not friends", id, friendId);
-            log.warn(errorMessage);
-            throw new AlreadyNotFriendsException(errorMessage);
-        }
         log.info("user {} and user {} are not friends anymore", id, friendId);
-        return user;
+        return userStorage.deleteFriend(id, friendId);
     }
 
     public List<User> getFriends(Long id) {
         User user = findUserOrThrow(id);
         log.info("list of friends of user {} successfully proceed", id);
-        return user.getFriendsById().stream().map(userStorage::findById).toList();
+        return userStorage.getFriends(id);
     }
 
     public List<User> getCommonFriends(Long id, Long otherId) {
