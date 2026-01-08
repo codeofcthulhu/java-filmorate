@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.util.EntityFinder;
 
@@ -18,42 +17,40 @@ public class FilmService {
     @Qualifier("filmDbStorage")
     private final FilmStorage filmStorage;
     private final UserService userService;
+    private final MpaService mpaService;
+    private final GenreService genreService;
 
     public Film create(Film film) {
-        log.info("film adding request successfully processed {}", film);
+        mpaService.findMpaOrThrow(film.getMpa().getId());
+        film.getGenres().forEach(genre -> genreService.findGenreOrThrow(genre.getId()));
         return filmStorage.create(film);
     }
 
     public List<Film> getAll() {
-        log.info("getAll request successfully processed");
         return filmStorage.getAll();
     }
 
     public Film update(Film film) {
         Long id = film.getId();
         findFilmOrThrow(id);
-        log.info("HTTP film update request successfully processed {}", film);
         return filmStorage.update(film);
     }
 
-    public List<User> addLike(Long id, Long userId) {
+    public void addLike(Long id, Long userId) {
         findFilmOrThrow(id);
         userService.findUserOrThrow(userId);
-        List<User> users = filmStorage.addLike(id, userId);
+        filmStorage.addLike(id, userId);
         log.info("User {} liked film {}", userId, id);
-        return users;
     }
 
-    public List<User> deleteLike(Long id, Long userId) {
-        Film film = findFilmOrThrow(id);
+    public void deleteLike(Long id, Long userId) {
+        findFilmOrThrow(id);
         userService.findUserOrThrow(userId);
-        List<User> users = filmStorage.deleteLike(id, userId);
+        filmStorage.deleteLike(id, userId);
         log.info("User {} remove like from film {}", userId, id);
-        return users;
     }
 
     public List<Film> getMostLikedFilms(int count) {
-        log.info("request for most liked films successfully proceed");
         return filmStorage.getMostLikedFilms(count);
     }
 

@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class Mpa {
-
-    Long id;
+    Integer id;
     String name;
 }

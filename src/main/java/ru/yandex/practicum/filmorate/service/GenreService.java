@@ -19,7 +19,7 @@ public class GenreService {
         return genreDbStorage.getAll();
     }
 
-    public Genre findGenreOrThrow(Long genreId) {
+    public Genre findGenreOrThrow(Integer genreId) {
         return EntityFinder.findOrThrow(genreId, genreDbStorage::findById, "Genre");
     }
 }

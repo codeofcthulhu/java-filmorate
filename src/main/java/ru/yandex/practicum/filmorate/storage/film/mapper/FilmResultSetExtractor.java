@@ -11,6 +11,8 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.Mpa;
 
 @Component
 public class FilmResultSetExtractor implements ResultSetExtractor<List<Film>> {
@@ -24,7 +26,7 @@ public class FilmResultSetExtractor implements ResultSetExtractor<List<Film>> {
 
             if (idToFilm.containsKey(currentFilmId)) {
                 Film existingFilm = idToFilm.get(currentFilmId);
-                existingFilm.getGenresIds().add(rs.getInt("genre_id"));
+                existingFilm.getGenres().add(new Genre(rs.getInt("genre_id"), null));
             } else {
                 String name = rs.getString("name");
                 String description = rs.getString("description");
@@ -32,8 +34,8 @@ public class FilmResultSetExtractor implements ResultSetExtractor<List<Film>> {
                 Integer duration = rs.getInt("duration");
                 Integer mpa = rs.getInt("mpa");
                 Film newFilm = Film.builder().id(currentFilmId).name(name).description(description)
-                        .releaseDate(releaseDate).duration(duration).mpa(mpa).build();
-                newFilm.getGenresIds().add(rs.getInt("genre_id"));
+                        .releaseDate(releaseDate).duration(duration).mpa(new Mpa(mpa, null))
+                        .genres(new ArrayList<>(List.of(new Genre(rs.getInt("genre_id"), null)))).build();
                 idToFilm.put(currentFilmId, newFilm);
             }
         }

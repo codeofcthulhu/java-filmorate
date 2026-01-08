@@ -10,16 +10,27 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 @UtilityClass
 public class EntityFinder {
 
-    public static <T> T findOrThrow(Long id, Function<Long, T> finder, String name) {
+    public static <T> T findOrThrow(long id, Function<Long, T> finder, String name) {
         try {
             T entity = finder.apply(id);
-            log.info("{} {} has been found", name, id);
+            log.debug("{} {} has been found", name, id);
             return entity;
         } catch (EmptyResultDataAccessException e) {
             String errorMessage = String.format("%s with id: %d is not found", name, id);
             log.warn(errorMessage);
             throw new NotFoundException(errorMessage);
         }
+    }
 
+    public static <T> T findOrThrow(int id, Function<Integer, T> finder, String name) {
+        try {
+            T entity = finder.apply(id);
+            log.debug("{} {} has been found", name, id);
+            return entity;
+        } catch (EmptyResultDataAccessException e) {
+            String errorMessage = String.format("%s with id: %d is not found", name, id);
+            log.warn(errorMessage);
+            throw new NotFoundException(errorMessage);
+        }
     }
 }

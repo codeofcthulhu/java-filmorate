@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Mpa;
 
 @Component
 public class FilmMapper implements RowMapper<Film> {
@@ -19,6 +20,6 @@ public class FilmMapper implements RowMapper<Film> {
         Integer duration = rs.getInt("duration");
         Integer mpa = rs.getInt("mpa");
         return Film.builder().id(filmId).name(name).description(description).releaseDate(releaseDate).duration(duration)
-                .mpa(mpa).build();
+                .mpa(new Mpa(mpa, null)).build();
     }
 }

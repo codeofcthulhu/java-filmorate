@@ -19,7 +19,7 @@ public class GenreDbStorage {
         return jdbcTemplate.query(GET_ALL_QUERY, genreMapper);
     }
 
-    public Genre findById(long id) {
+    public Genre findById(int id) {
         return jdbcTemplate.queryForObject(GET_BY_ID_QUERY, genreMapper, id);
     }
 }

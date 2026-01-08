@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.controller;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,9 +13,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.validation.groups.OnCreate;
 import ru.yandex.practicum.filmorate.validation.groups.OnUpdate;
@@ -52,15 +53,16 @@ public class FilmController {
     }
 
     @PutMapping("/{id}/like/{userId}")
-    public List<User> addLike(@PathVariable Long id, @PathVariable Long userId) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void addLike(@PathVariable Long id, @PathVariable Long userId) {
         log.info("received HTTP request to add like to film {} from user {}", id, userId);
-        return filmService.addLike(id, userId);
+        filmService.addLike(id, userId);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
-    public List<User> deleteLike(@PathVariable Long id, @PathVariable Long userId) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteLike(@PathVariable Long id, @PathVariable Long userId) {
         log.info("received HTTP request to delete like from film {} from user {}", id, userId);
-        return filmService.deleteLike(id, userId);
     }
 
     @GetMapping("/popular")

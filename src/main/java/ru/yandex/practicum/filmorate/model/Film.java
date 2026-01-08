@@ -22,7 +22,7 @@ import ru.yandex.practicum.filmorate.validation.groups.OnUpdate;
 public class Film {
 
     @JsonIgnore
-    private Set<Long> likesByUserId = new HashSet<>();
+    private Set<Long> idsOfLikedUsers = new HashSet<>();
     @NotNull(groups = OnUpdate.class, message = "ID must be specified")
     private Long id;
     @NotBlank(groups = OnCreate.class, message = "Film name must not be empty")
@@ -34,16 +34,17 @@ public class Film {
     private LocalDate releaseDate;
     @Positive(groups = {OnCreate.class, OnUpdate.class}, message = "Duration must be positive number")
     private Integer duration;
-    private List<Integer> genresIds = new ArrayList<>();
-    private Integer mpa;
+    private List<Genre> genres = new ArrayList<>();
+    private Mpa mpa;
 
     @Builder
-    public Film(Long id, String name, String description, LocalDate releaseDate, int duration, Integer mpa) {
+    public Film(Long id, String name, String description, LocalDate releaseDate, int duration, List<Genre> genres, Mpa mpa) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.releaseDate = releaseDate;
         this.duration = duration;
+        this.genres = genres;
         this.mpa = mpa;
     }
 }

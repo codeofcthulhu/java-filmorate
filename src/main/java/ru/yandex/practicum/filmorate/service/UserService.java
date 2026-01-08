@@ -20,7 +20,6 @@ public class UserService {
 
     public User create(User user) {
         checkName(user);
-        log.info("user creation request successfully processed {}", user);
         return userStorage.create(user);
     }
 
@@ -32,7 +31,6 @@ public class UserService {
         Long id = user.getId();
         findUserOrThrow(id);
         checkName(user);
-        log.info("HTTP user update request successfully processed {}", user);
         return userStorage.update(user);
     }
 
@@ -60,8 +58,7 @@ public class UserService {
         User user = findUserOrThrow(id);
         User otherUser = findUserOrThrow(otherId);
         log.info("list of common friends of user {} and user {} successfully proceed", id, otherId);
-        return user.getFriendsById().stream().filter(otherUser.getFriendsById()::contains).map(userStorage::findById)
-                .collect(Collectors.toList());
+        return userStorage.getFriends(id).stream().filter(getFriends(otherId)::contains).collect(Collectors.toList());
     }
 
     public User findUserOrThrow(Long id) {

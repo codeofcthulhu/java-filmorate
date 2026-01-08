@@ -11,8 +11,8 @@ import ru.yandex.practicum.filmorate.storage.film.mapper.MpaMapper;
 @RequiredArgsConstructor
 public class MpaDbStorage {
 
-    private static final String GET_ALL_QUERY = "SELECT * FROM mpa;";
-    private static final String GET_BY_ID_QUERY = "SELECT * FROM mpa WHERE mpa_id = ?;";
+    private static final String GET_ALL_QUERY = "SELECT * FROM mpa_rating;";
+    private static final String GET_BY_ID_QUERY = "SELECT * FROM mpa_rating WHERE mpa_id = ?;";
     private final JdbcTemplate jdbcTemplate;
     private final MpaMapper mpaMapper;
 
@@ -20,7 +20,7 @@ public class MpaDbStorage {
         return jdbcTemplate.query(GET_ALL_QUERY, mpaMapper);
     }
 
-    public Mpa findById(long id) {
+    public Mpa findById(int id) {
         return jdbcTemplate.queryForObject(GET_BY_ID_QUERY, mpaMapper, id);
     }
 }

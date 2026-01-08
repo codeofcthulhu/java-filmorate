@@ -19,7 +19,7 @@ public class MpaService {
         return mpaDbStorage.getAll();
     }
 
-    public Mpa findMpaOrThrow(long mpaId) {
+    public Mpa findMpaOrThrow(int mpaId) {
         return EntityFinder.findOrThrow(mpaId, mpaDbStorage::findById, "Mpa");
     }
 }

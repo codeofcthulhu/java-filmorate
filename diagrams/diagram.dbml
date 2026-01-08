@@ -30,7 +30,7 @@ Table films {
 
 // Genres table
 Table genres {
-  genre_id   bigint [pk, increment]     // Primary key, auto-increment
+  genre_id   int [pk, increment]     // Primary key, auto-increment
   name       varchar [not null]         // Genre name
 }
 
@@ -38,7 +38,7 @@ Table genres {
 Table film_genres {
   film_genres_id bigint [pk, increment]
   film_id        bigint [ref: > films.film_id]   // References films table
-  genre_id       bigint [ref: > genres.genre_id] // References genres table
+  genre_id       int [ref: > genres.genre_id] // References genres table
 
   Indexes {
     (film_id, genre_id) [unique]

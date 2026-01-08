@@ -20,7 +20,7 @@ import ru.yandex.practicum.filmorate.validation.groups.OnUpdate;
 public class User {
 
     @JsonIgnore
-    private Set<Long> friendsById = new HashSet<>();
+    private Set<Long> friendsIds = new HashSet<>();
     @NotNull(groups = OnUpdate.class, message = "ID must be specified")
     private Long id;
     private String name;
