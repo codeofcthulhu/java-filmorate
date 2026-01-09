@@ -64,5 +64,4 @@ WHERE l.user_id = 1;
 ## Notes
 
 - All relationships are normalized according to the 3rd Normal Form (3NF).
-- Enum fields are used for `friendship.status` and `film.mpa_rating`.
 - Many-to-many relationships (films ↔ genres, users ↔ friends) are represented via separate join tables.	
