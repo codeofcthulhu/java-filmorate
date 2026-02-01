@@ -22,4 +22,8 @@ public class MpaService {
     public Mpa findMpaOrThrow(int mpaId) {
         return EntityFinder.findOrThrow(mpaId, mpaDbStorage::findById, "Mpa");
     }
+
+    public Mpa getFilmMpaById(Long filmId) {
+        return mpaDbStorage.getFilmMpaById(filmId);
+    }
 }

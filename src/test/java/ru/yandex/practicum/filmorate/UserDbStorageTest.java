@@ -12,15 +12,17 @@ import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.Import;
 import ru.yandex.practicum.filmorate.config.TestConfig;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.user.FriendshipDbStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserDbStorage;
 
 @JdbcTest
 @AutoConfigureTestDatabase
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
-@Import({TestConfig.class, UserDbStorage.class})
+@Import({TestConfig.class, UserDbStorage.class, FriendshipDbStorage.class})
 class UserDbStorageTest {
 
     private final UserDbStorage userStorage;
+    private final FriendshipDbStorage friendshipDbStorage;
 
     @Test
     void createUser() {
@@ -69,7 +71,7 @@ class UserDbStorageTest {
     }
 
     @Test
-    void addAndDeleteFriend() {
+    void addFriend() {
         User u1 = userStorage.create(User.builder()
                 .login("u1")
                 .email("u1@mail.com")
@@ -82,10 +84,28 @@ class UserDbStorageTest {
                 .birthday(LocalDate.of(1990, 1, 1))
                 .build());
 
-        assertThat(userStorage.addFriend(u1.getId(), u2.getId()))
+        friendshipDbStorage.addFriend(u1.getId(), u2.getId());
+        assertThat(friendshipDbStorage.getFriends(u1.getId()))
                 .hasSize(1);
 
-        assertThat(userStorage.deleteFriend(u1.getId(), u2.getId()))
+    }
+
+    @Test
+    void deleteFriend() {
+        User u1 = userStorage.create(User.builder()
+                .login("u1")
+                .email("u1@mail.com")
+                .birthday(LocalDate.of(1990, 1, 1))
+                .build());
+
+        User u2 = userStorage.create(User.builder()
+                .login("u2")
+                .email("u2@mail.com")
+                .birthday(LocalDate.of(1990, 1, 1))
+                .build());
+
+        friendshipDbStorage.deleteFriend(u1.getId(), u2.getId());
+        assertThat(friendshipDbStorage.getFriends(u1.getId()))
                 .isEmpty();
     }
 

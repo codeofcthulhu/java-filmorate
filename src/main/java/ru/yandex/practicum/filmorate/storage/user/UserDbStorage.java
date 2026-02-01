@@ -16,14 +16,26 @@ import ru.yandex.practicum.filmorate.storage.user.mapper.UserMapper;
 @RequiredArgsConstructor
 public class UserDbStorage implements UserStorage {
 
-    private static final String CREATE_QUERY = "INSERT INTO users (name, login, email, birthday) VALUES (?, ?, ?, ?);";
-    private static final String GET_ALL_QUERY = "SELECT * FROM users;";
-    private static final String UPDATE_QUERY =
-            "UPDATE users SET name = ?, login = ?, email = ?, birthday = ? " + "WHERE user_id = ?;";
-    private static final String GET_BY_ID_QUERY = "SELECT * FROM users WHERE user_id = ?;";
-    private static final String ADD_FRIEND = "INSERT INTO friendships (user_id, friend_id) VALUES(?, ?);";
-    private static final String GET_FRIENDS = "SELECT friend_id FROM friendships WHERE user_id = ?;";
-    private static final String DELETE_FRIEND = "DELETE FROM friendships WHERE user_id = ? AND friend_id = ?;";
+    private static final String CREATE_QUERY = """
+            INSERT INTO users (name, login, email, birthday)
+            VALUES (?, ?, ?, ?);
+            """;
+    private static final String GET_ALL_QUERY = """
+            SELECT * FROM users;
+            """;
+    private static final String UPDATE_QUERY = """
+            UPDATE users
+            SET name = ?,
+                login = ?,
+                email = ?,
+                birthday = ?
+            WHERE user_id = ?;
+            """;
+    private static final String GET_BY_ID_QUERY = """
+            SELECT *
+            FROM users
+            WHERE user_id = ?;
+            """;
     private final JdbcTemplate jdbcTemplate;
     private final UserMapper userMapper;
 
@@ -51,6 +63,11 @@ public class UserDbStorage implements UserStorage {
     }
 
     @Override
+    public User findById(Long id) {
+        return jdbcTemplate.queryForObject(GET_BY_ID_QUERY, userMapper, id);
+    }
+
+    @Override
     public List<User> getAll() {
         return jdbcTemplate.query(GET_ALL_QUERY, userMapper);
     }
@@ -63,25 +80,5 @@ public class UserDbStorage implements UserStorage {
             throw new InternalServerException("Couldn't update data");
         }
         return user;
-    }
-
-    public List<User> getFriends(Long id) {
-        return jdbcTemplate.query(GET_FRIENDS, (rs, rowNum) -> rs.getLong("friend_id"), id).stream()
-                .map(this::findById).toList();
-    }
-
-    @Override
-    public User findById(Long id) {
-        return jdbcTemplate.queryForObject(GET_BY_ID_QUERY, userMapper, id);
-    }
-
-    public List<User> addFriend(Long userId, Long friendId) {
-        jdbcTemplate.update(ADD_FRIEND, userId, friendId);
-        return getFriends(userId);
-    }
-
-    public List<User> deleteFriend(Long userId, Long friendId) {
-        jdbcTemplate.update(DELETE_FRIEND, userId, friendId);
-        return getFriends(userId);
     }
 }

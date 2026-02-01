@@ -50,15 +50,15 @@ public class UserController {
     }
 
     @PutMapping("/{id}/friends/{friendId}")
-    public List<User> addFriend(@PathVariable Long id, @PathVariable Long friendId) {
+    public void addFriend(@PathVariable Long id, @PathVariable Long friendId) {
         log.info("received HTTP request to make users {} and {} friends", id, friendId);
-        return userService.addFriend(id, friendId);
+        userService.addFriend(id, friendId);
     }
 
     @DeleteMapping("/{id}/friends/{friendId}")
-    public List<User> deleteFriend(@PathVariable Long id, @PathVariable Long friendId) {
+    public void deleteFriend(@PathVariable Long id, @PathVariable Long friendId) {
         log.info("received HTTP request to ending friendship between users {} and {}", id, friendId);
-        return userService.deleteFriend(id, friendId);
+        userService.deleteFriend(id, friendId);
     }
 
     @GetMapping("/{id}/friends")

@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,8 +20,11 @@ import ru.yandex.practicum.filmorate.validation.groups.OnUpdate;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Film {
 
+    @Builder.Default
     @JsonIgnore
     private Set<Long> idsOfLikedUsers = new HashSet<>();
     @NotNull(groups = OnUpdate.class, message = "ID must be specified")
@@ -34,17 +38,7 @@ public class Film {
     private LocalDate releaseDate;
     @Positive(groups = {OnCreate.class, OnUpdate.class}, message = "Duration must be positive number")
     private Integer duration;
+    @Builder.Default
     private List<Genre> genres = new ArrayList<>();
     private Mpa mpa;
-
-    @Builder
-    public Film(Long id, String name, String description, LocalDate releaseDate, int duration, List<Genre> genres, Mpa mpa) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.releaseDate = releaseDate;
-        this.duration = duration;
-        this.genres = genres;
-        this.mpa = mpa;
-    }
 }
