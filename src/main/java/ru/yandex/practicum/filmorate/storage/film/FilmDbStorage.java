@@ -12,7 +12,6 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.film.mapper.FilmMapper;
 import ru.yandex.practicum.filmorate.storage.film.mapper.FilmResultSetExtractor;
 
-
 @Repository
 @Qualifier("filmDbStorage")
 @RequiredArgsConstructor
@@ -24,9 +23,13 @@ public class FilmDbStorage implements FilmStorage {
             """;
     private static final String GET_ALL_QUERY = """
             SELECT f.*,
-                   fg.genre_id
+                   mr.name AS mpa_name,
+                   fg.genre_id,
+                   g.name AS genre_name
             FROM films AS f
-            LEFT JOIN film_genres AS fg ON f.film_id = fg.film_id;
+            JOIN mpa_rating AS mr ON f.mpa = mr.mpa_id
+            LEFT JOIN film_genres AS fg ON f.film_id = fg.film_id
+            LEFT JOIN genres AS g ON fg.genre_id = g.genre_id;
             """;
     private static final String UPDATE_QUERY = """
             UPDATE films
@@ -38,14 +41,11 @@ public class FilmDbStorage implements FilmStorage {
             WHERE film_id = ?;
             """;
     private static final String GET_BY_ID_QUERY = """
-            SELECT *
-            FROM films
+            SELECT f.*,
+                   mr.name AS mpa_name
+            FROM films AS f
+            JOIN mpa_rating AS mr ON f.mpa = mr.mpa_id
             WHERE film_id = ?;
-            """;
-    private static final String GET_MANY_BY_ID_QUERY = """
-            SELECT *
-            FROM films
-            WHERE film_id IN
             """;
 
     private final JdbcTemplate jdbcTemplate;

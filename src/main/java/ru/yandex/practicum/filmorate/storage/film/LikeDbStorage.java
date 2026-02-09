@@ -22,9 +22,11 @@ public class LikeDbStorage {
               AND film_id = ?;
             """;
     private static final String GET_MOST_LIKED_FILMS = """
-            SELECT f.*
+            SELECT f.*,
+                   mr.name AS mpa_name
             FROM films AS f
             LEFT JOIN likes l ON f.film_id = l.film_id
+            JOIN mpa_rating AS mr ON f.mpa = mr.mpa_id
             GROUP BY f.film_id
             ORDER BY COUNT(l.film_id) DESC, f.film_id DESC
             LIMIT ?;

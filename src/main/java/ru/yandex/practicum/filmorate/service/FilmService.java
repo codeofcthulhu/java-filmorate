@@ -67,7 +67,6 @@ public class FilmService {
     public Film findFilmOrThrow(Long filmId) {
         Film film = EntityFinder.findOrThrow(filmId, filmStorage::findById, "Film");
         film.setGenres(genreService.getFilmGenresById(filmId));
-        film.setMpa(mpaService.getFilmMpaById(filmId));
         return film;
     }
 }

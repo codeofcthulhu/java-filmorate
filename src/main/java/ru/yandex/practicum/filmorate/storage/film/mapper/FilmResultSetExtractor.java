@@ -26,16 +26,18 @@ public class FilmResultSetExtractor implements ResultSetExtractor<List<Film>> {
 
             if (idToFilm.containsKey(currentFilmId)) {
                 Film existingFilm = idToFilm.get(currentFilmId);
-                existingFilm.getGenres().add(new Genre(rs.getInt("genre_id"), null));
+                existingFilm.getGenres().add(new Genre(rs.getInt("genre_id"), rs.getString("genre_name")));
             } else {
                 String name = rs.getString("name");
                 String description = rs.getString("description");
                 LocalDate releaseDate = rs.getDate("release_date").toLocalDate();
                 Integer duration = rs.getInt("duration");
                 Integer mpa = rs.getInt("mpa");
+                String mpaName = rs.getString("mpa_name");
                 Film newFilm = Film.builder().id(currentFilmId).name(name).description(description)
-                        .releaseDate(releaseDate).duration(duration).mpa(new Mpa(mpa, null))
-                        .genres(new ArrayList<>(List.of(new Genre(rs.getInt("genre_id"), null)))).build();
+                        .releaseDate(releaseDate).duration(duration).mpa(new Mpa(mpa, mpaName))
+                        .genres(new ArrayList<>(List.of(new Genre(rs.getInt("genre_id"), rs.getString("genre_name")))))
+                        .build();
                 idToFilm.put(currentFilmId, newFilm);
             }
         }
