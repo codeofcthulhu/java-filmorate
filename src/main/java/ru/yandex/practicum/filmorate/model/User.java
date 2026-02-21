@@ -9,6 +9,8 @@ import jakarta.validation.constraints.Pattern;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.yandex.practicum.filmorate.validation.groups.OnCreate;
@@ -16,9 +18,13 @@ import ru.yandex.practicum.filmorate.validation.groups.OnUpdate;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class User {
+
     @JsonIgnore
-    private Set<Long> friendsById = new HashSet<>();
+    @Builder.Default
+    private Set<Long> friendsIds = new HashSet<>();
     @NotNull(groups = OnUpdate.class, message = "ID must be specified")
     private Long id;
     private String name;
@@ -31,13 +37,4 @@ public class User {
     private String email;
     @PastOrPresent(groups = {OnCreate.class, OnUpdate.class}, message = "Birth date can't be in future time")
     private LocalDate birthday;
-
-    public User(Long id, String name, String login, String email, LocalDate birthday) {
-        this.id = id;
-        this.name = name;
-        this.login = login;
-        this.email = email;
-        this.birthday = birthday;
-        this.friendsById = new HashSet<>();
-    }
 }
